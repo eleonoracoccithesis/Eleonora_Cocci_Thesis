@@ -1,0 +1,21 @@
+library(dplyr)
+
+# Assuming all datasets are loaded
+
+# Filter, create baby_2007, and perform all joins in one chain
+dataset_2007 <- Family_and_household_2008 %>%
+  filter(cf08a003 == 2 & cf08a004 >= 18 & cf08a004 <= 40) %>%  # Gender is female, age between 18 and 40
+  mutate(baby_2007 = ifelse(cf08a037 == 2007, 1, 0)) %>%  # Create baby_2007 variable
+  filter(!is.na(baby_2007)) %>%  # Remove NAs
+  select(nomem_encr, cf08a003, cf08a004, cf08a181, cf08a037, cf08a128, cf08a163, baby_2007) %>%  # Select relevant columns
+  
+  left_join(Background_variables_2007 %>% select(nomem_encr, partner), by = "nomem_encr") %>% # Aadd columns from other datasets
+  left_join(Religion_and_ethnicity_2008 %>% select(nomem_encr, cr08a012), by = "nomem_encr") %>%
+  left_join(Social_integration_and_leisure_2008 %>% select(nomem_encr, cs08a006, cs08a046, cs08a283), by = "nomem_encr") %>%
+  left_join(Work_and_schooling_2008 %>% select(nomem_encr, cw08a133, cw08a131), by = "nomem_encr")
+
+# View the final dataset
+View(dataset_2007)
+
+# Save the final dataset to an RDS file
+saveRDS(dataset_2007, file = "dataset_2007.rds")
