@@ -100,4 +100,53 @@ saveRDS(dataset_2010, file = "dataset_2010.rds")
 
 
 
+DATASET_2011
+library(dplyr)
+
+# Assuming all datasets are loaded
+
+# Filter, create baby_2011, and perform all joins in one chain
+dataset_2011 <- Family_and_household_2012 %>%
+  filter(cf12e003 == 2 & cf12e004 >= 18 & cf12e004 <= 40) %>%  # Gender is female, age between 18 and 40
+  mutate(baby_2011 = ifelse(cf12e037 == 2011, 1, 0)) %>%  # Create baby_2011 variable
+  filter(!is.na(baby_2011)) %>%  # Remove rows with NA in baby_2011
+  select(nomem_encr, cf12e003, cf12e004, cf12e181, cf12e037, cf12e128, cf12e163, baby_2011) %>%  # Select relevant columns
+  left_join(Background_variables_2011 %>% select(nomem_encr, partner), by = "nomem_encr") %>%  # Add columns from other datasets
+  left_join(Religion_and_ethnicity_2012 %>% select(nomem_encr, cr12e012), by = "nomem_encr") %>%
+  left_join(Social_integration_and_leisure_2012 %>% select(nomem_encr, cs12e006, cs12e046, cs12e283), by = "nomem_encr") %>%
+  left_join(Work_and_schooling_2012 %>% select(nomem_encr, cw12e133, cw12e131), by = "nomem_encr")
+
+# View the final dataset
+View(dataset_2011)
+
+# Save the final dataset to an RDS file
+saveRDS(dataset_2011, file = "dataset_2011.rds")
+
+
+DATASET_2012
+library(dplyr)
+
+# Assuming all datasets are loaded
+
+# Filter, create baby_2012, and perform all joins in one chain
+dataset_2012 <- Family_and_household_2013 %>%
+  filter(cf13f003 == 2 & cf13f004 >= 18 & cf13f004 <= 40) %>%  # Gender is female, age between 18 and 40
+  mutate(baby_2012 = ifelse(cf13f037 == 2012, 1, 0)) %>%  # Create baby_2012 variable
+  filter(!is.na(baby_2012)) %>%  # Remove rows with NA in baby_2012
+  select(nomem_encr, cf13f003, cf13f004, cf13f181, cf13f037, cf13f128, cf13f163, baby_2012) %>%  # Select relevant columns
+  
+  left_join(Background_variables_2012 %>% select(nomem_encr, partner), by = "nomem_encr") %>%  # Add columns from other datasets
+  left_join(Religion_and_ethnicity_2013 %>% select(nomem_encr, cr13f012), by = "nomem_encr") %>%
+  left_join(Social_integration_and_leisure_2013 %>% select(nomem_encr, cs13f006, cs13f046, cs13f283), by = "nomem_encr") %>%
+  left_join(Work_and_schooling_2013 %>% select(nomem_encr, cw13f133, cw13f131), by = "nomem_encr")
+
+# View the final dataset
+View(dataset_2012)
+
+# Save the final dataset to an RDS file
+saveRDS(dataset_2012, file = "dataset_2012.rds")
+
+
+
+
 
