@@ -230,7 +230,7 @@ library(dplyr)
 # Filter, create baby_2016, and perform all joins in one chain
 dataset_2016 <- Family_and_household_2017 %>%
   filter(cf17j003 == 2 & cf17j004 >= 18 & cf17j004 <= 40) %>%  # Gender is female, age between 18 and 40
-  mutate(baby_2016 = ifelse(cf17j456 == 2017, 1, 0)) %>%  # Create baby_2016 variable using cf456
+  mutate(baby_2016 = ifelse(cf17j456 == 2016, 1, 0)) %>%  # Create baby_2016 variable using cf456
   filter(!is.na(baby_2016)) %>%  # Remove rows with NA in baby_2016
   select(nomem_encr, cf17j003, cf17j004, cf17j181, cf17j456, cf17j128, cf17j163, baby_2016) %>%  # Select relevant columns
  
@@ -281,9 +281,9 @@ library(dplyr)
 # Filter, create baby_2017, and perform all joins in one chain
 dataset_2018 <- Family_and_household_2019 %>%
   filter(cf19l003 == 2 & cf19l004 >= 18 & cf19l004 <= 40) %>%  # Gender is female, age between 18 and 40
-  mutate(baby_2017 = ifelse(cf19l456 == 2017, 1, 0)) %>%  # Create baby_2017 variable using cf456
-  filter(!is.na(baby_2017)) %>%  # Remove rows with NA in baby_2017
-  select(nomem_encr, cf19l003, cf19l004, cf19l181, cf19l456, cf19l128, cf19l163, baby_2017) %>%  # Select relevant columns
+  mutate(baby_2018 = ifelse(cf19l456 == 2018, 1, 0)) %>%  # Create baby_2017 variable using cf456
+  filter(!is.na(baby_2018)) %>%  # Remove rows with NA in baby_2017
+  select(nomem_encr, cf19l003, cf19l004, cf19l181, cf19l456, cf19l128, cf19l163, baby_2018) %>%  # Select relevant columns
  
   left_join(Background_variables_2018 %>% select(nomem_encr, partner), by = "nomem_encr") %>%  # Add columns from other datasets
   left_join(Religion_and_ethnicity_2019 %>% select(nomem_encr, cr19l143), by = "nomem_encr") %>%
@@ -295,6 +295,107 @@ View(dataset_2018)
 
 # Save the final dataset to an RDS file
 saveRDS(dataset_2018, file = "dataset_2018.rds")
+
+
+
+DATASET_2019
+library(dplyr)
+
+# Assuming all datasets are loaded
+
+# Filter, create baby_2019, and perform all joins in one chain
+dataset_2019 <- Family_and_household_2020 %>%
+  filter(cf20m003 == 2 & cf20m004 >= 18 & cf20m004 <= 40) %>%  # Gender is female, age between 18 and 40
+  mutate(baby_2019 = ifelse(cf20m456 == 2019, 1, 0)) %>%  # Create baby_2019 variable using cf456
+  filter(!is.na(baby_2019)) %>%  # Remove rows with NA in baby_2019
+  select(nomem_encr, cf20m003, cf20m004, cf20m181, cf20m456, cf20m128, cf20m163, baby_2019) %>%  # Select relevant columns
+ 
+  left_join(Background_variables_2019 %>% select(nomem_encr, partner), by = "nomem_encr") %>%  # Add columns from other datasets
+  left_join(Religion_and_ethnicity_2020 %>% select(nomem_encr, cr20m143), by = "nomem_encr") %>%
+  left_join(Social_integration_and_leisure_2020 %>% select(nomem_encr, cs20m006, cs20m046, cs20m283), by = "nomem_encr") %>%
+  left_join(Work_and_schooling_2020 %>% select(nomem_encr, cw20m133, cw20m131), by = "nomem_encr")
+
+# View the final dataset
+View(dataset_2019)
+
+# Save the final dataset to an RDS file
+saveRDS(dataset_2019, file = "dataset_2019.rds")
+
+
+DATASET_2020
+library(dplyr)
+
+# Assuming all datasets are loaded
+
+# Filter, create baby_2020, and perform all joins in one chain
+dataset_2020 <- Family_and_household_2021 %>%
+  filter(cf21n003 == 2 & cf21n004 >= 18 & cf21n004 <= 40) %>%  # Gender is female, age between 18 and 40
+  mutate(baby_2020 = ifelse(cf21n456 == 2020, 1, 0)) %>%  # Create baby_2020 variable using cf456
+  filter(!is.na(baby_2020)) %>%  # Remove rows with NA in baby_2020
+  select(nomem_encr, cf21n003, cf21n004, cf21n181, cf21n456, cf21n128, cf21n163, baby_2020) %>%  # Select relevant columns
+ 
+  left_join(Background_variables_2020 %>% select(nomem_encr, partner), by = "nomem_encr") %>%  # Add columns from other datasets
+  left_join(Religion_and_ethnicity_2021 %>% select(nomem_encr, cr21n143), by = "nomem_encr") %>%
+  left_join(Social_integration_and_leisure_2021 %>% select(nomem_encr, cs21n006, cs21n046, cs21n283), by = "nomem_encr") %>%
+  left_join(Work_and_schooling_2021 %>% select(nomem_encr, cw21n133, cw21n131), by = "nomem_encr")
+
+# View the final dataset
+View(dataset_2020)
+
+# Save the final dataset to an RDS file
+saveRDS(dataset_2020, file = "dataset_2020.rds")
+
+
+
+
+DATASET_2021
+library(dplyr)
+
+# Assuming all datasets are loaded
+
+# Filter, create baby_2021, and perform all joins in one chain
+dataset_2021 <- Family_and_household_2022 %>%
+  filter(cf22o536 == 2 & cf22o004 >= 18 & cf22o004 <= 40) %>%  # Gender is female, age between 18 and 40
+  mutate(baby_2021 = ifelse(cf22o456 == 2021, 1, 0)) %>%  # Create baby_2021 variable using cf456
+  filter(!is.na(baby_2021)) %>% #remove rows with NAs in baby_2021
+  select(nomem_encr, cf22o536, cf22o004, cf22o181, cf22o456, cf22o128, cf22o163, baby_2021) %>%  # Select relevant columns
+ 
+  left_join(Background_variables_2021 %>% select(nomem_encr, partner), by = "nomem_encr") %>%  # Add columns from other datasets
+  left_join(Religion_and_ethnicity_2022 %>% select(nomem_encr, cr22o143), by = "nomem_encr") %>%
+  left_join(Social_integration_and_leisure_2022 %>% select(nomem_encr, cs22o006, cs22o046, cs22o283), by = "nomem_encr") %>%
+  left_join(Work_and_schooling_2022 %>% select(nomem_encr, cw22o133, cw22o131), by = "nomem_encr")
+
+# View the final dataset
+View(dataset_2021)
+
+# Save the final dataset to an RDS file
+saveRDS(dataset_2021, file = "dataset_2021.rds")
+
+
+
+DATASET_2022
+library(dplyr)
+
+# Assuming all datasets are loaded
+
+# Filter, create baby_2022, and perform all joins in one chain
+dataset_2022 <- Family_and_household_2023 %>%
+  filter(cf23p536 == 2 & cf23p004 >= 18 & cf23p004 <= 40) %>%  # Gender is female, age between 18 and 40
+  mutate(baby_2022 = ifelse(cf23p456 == 2022, 1, 0)) %>%  # Create baby_2022 variable using cf456
+  filter(!is.na(baby_2022)) %>%  # Remove rows with NA in baby_2022
+  select(nomem_encr, cf23p536, cf23p004, cf23p181, cf23p456, cf23p128, cf23p163, baby_2022) %>%  # Select relevant columns
+ 
+  left_join(Background_variables_2022 %>% select(nomem_encr, partner), by = "nomem_encr") %>%  # Add columns from other datasets
+  left_join(Religion_and_ethnicity_2023 %>% select(nomem_encr, cr23p143), by = "nomem_encr") %>%
+  left_join(Social_integration_and_leisure_2023 %>% select(nomem_encr, cs23p006, cs23p046, cs23p283), by = "nomem_encr") %>%
+  left_join(Work_and_schooling_2023 %>% select(nomem_encr, cw23p133, cw23p131), by = "nomem_encr")
+
+# View the final dataset
+View(dataset_2022)
+
+# Save the final dataset to an RDS file
+saveRDS(dataset_2022, file = "dataset_2022.rds")
+
 
 
 
