@@ -1,0 +1,35 @@
+DATASET_2007
+library(dplyr)
+
+# Rename columns in dataset_2007 for consistency
+dataset_2007 <- dataset_2007 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf08a003,
+    age = cf08a004,
+    family_satisfaction = cf08a181,
+    birth_year_first_child = cf08a037,
+    future_children = cf08a128,
+    shared_friends = cf08a163,
+    baby_2007 = baby_2007,
+    partner = partner,
+    church_member = cr08a012,
+    sports_club_member = cs08a006,
+    political_party_member = cs08a046,
+    social_contacts_satisfaction = cs08a283,
+    work_satisfaction = cw08a133,
+    colleague_atmosphere_satisfaction = cw08a131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2007
+dataset_2007 <- dataset_2007 %>%
+   mutate(year = 2007)
+
+
+
+
+# View the updated dataset
+View(dataset_2007)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2007, file = "dataset_2007.rds")
