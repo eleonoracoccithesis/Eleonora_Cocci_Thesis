@@ -349,3 +349,204 @@ saveRDS(dataset_2016, file = "dataset_2016.rds")
 
 
 DATASET_2017
+library(dplyr)
+
+# Rename columns in dataset_2017 for consistency
+dataset_2017 <- dataset_2017 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf18k003,
+    age = cf18k004,
+    family_satisfaction = cf18k181,
+    birth_year_first_child = cf18k456,
+    future_children = cf18k128,
+    shared_friends = cf18k163,
+    baby_2017 = baby_2017,
+    partner = partner,
+    church_member = cr18k012,
+    sports_club_member = cs18k006,
+    political_party_member = cs18k046,
+    social_contacts_satisfaction = cs18k283,
+    work_satisfaction = cw18k133,
+    colleague_atmosphere_satisfaction = cw18k131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2017
+  mutate(year = 2017)
+
+# View the updated dataset
+View(dataset_2017)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2017, file = "dataset_2017.rds")
+
+
+
+DATASET_2018
+library(dplyr)
+
+# Rename columns in dataset_2018 for consistency
+dataset_2018 <- dataset_2018 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf19l003,
+    age = cf19l004,
+    family_satisfaction = cf19l181,
+    birth_year_first_child = cf19l456,
+    future_children = cf19l128,
+    shared_friends = cf19l163,
+    baby_2018 = baby_2018,
+    partner = partner,
+    church_member = cr19l143,
+    sports_club_member = cs19l006,
+    political_party_member = cs19l046,
+    social_contacts_satisfaction = cs19l283,
+    work_satisfaction = cw19l133,
+    colleague_atmosphere_satisfaction = cw19l131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2018
+  mutate(year = 2018)
+
+# View the updated dataset
+View(dataset_2018)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2018, file = "dataset_2018.rds")
+
+
+
+DATASET_2019
+library(dplyr)
+
+# Rename columns in dataset_2019 for consistency
+dataset_2019 <- dataset_2019 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf20m003,
+    age = cf20m004,
+    family_satisfaction = cf20m181,
+    birth_year_first_child = cf20m456,
+    future_children = cf20m128,
+    shared_friends = cf20m163,
+    baby_2019 = baby_2019,
+    partner = partner,
+    church_member = cr20m143,
+    sports_club_member = cs20m006,
+    political_party_member = cs20m046,
+    social_contacts_satisfaction = cs20m283,
+    work_satisfaction = cw20m133,
+    colleague_atmosphere_satisfaction = cw20m131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2019
+  mutate(year = 2019)
+
+# View the updated dataset
+View(dataset_2019)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2019, file = "dataset_2019.rds")
+
+
+
+DATASET_2020
+library(dplyr)
+
+# Rename columns in dataset_2020 for consistency
+dataset_2020 <- dataset_2020 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf21n003,
+    age = cf21n004,
+    family_satisfaction = cf21n181,
+    birth_year_first_child = cf21n456,
+    future_children = cf21n128,
+    shared_friends = cf21n163,
+    baby_2021 = baby_2020,
+    partner = partner,
+    church_member = cr21n143,
+    sports_club_member = cs21n006,
+    political_party_member = cs21n046,
+    social_contacts_satisfaction = cs21n283,
+    work_satisfaction = cw21n133,
+    colleague_atmosphere_satisfaction = cw21n131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2020
+  mutate(year = 2020)
+
+# View the updated dataset
+View(dataset_2020)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2020, file = "dataset_2020.rds")
+
+
+
+
+DATASET_2021
+library(dplyr)
+
+# Rename columns in dataset_2021 for consistency
+dataset_2021 <- dataset_2021 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf22o536,
+    age = cf22o004,
+    family_satisfaction = cf22o181,
+    birth_year_first_child = cf22o456,
+    future_children = cf22o128,
+    shared_friends = cf22o163,
+    baby_2021 = baby_2021,
+    partner = partner,
+    church_member = cr22o143,
+    sports_club_member = cs22o006,
+    political_party_member = cs22o046,
+    social_contacts_satisfaction = cs22o283,
+    work_satisfaction = cw22o133,
+    colleague_atmosphere_satisfaction = cw22o131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2021
+  mutate(year = 2021)
+
+# View the updated dataset
+View(dataset_2021)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2021, file = "dataset_2021.rds")
+
+
+DATASET_2022
+library(dplyr)
+
+# Rename columns in dataset_2022 for consistency
+dataset_2022 <- dataset_2022 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf23p536,
+    age = cf23p004,
+    family_satisfaction = cf23p181,
+    birth_year_first_child = cf23p456,
+    future_children = cf23p128,
+    shared_friends = cf23p163,
+    baby_2022 = baby_2022,
+    partner = partner,
+    church_member = cr23p143,
+    sports_club_member = cs23p006,
+    political_party_member = cs23p046,
+    social_contacts_satisfaction = cs23p283,
+    work_satisfaction = cw23p133,
+    colleague_atmosphere_satisfaction = cw23p131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2022
+  mutate(year = 2022)
+
+# View the updated dataset
+View(dataset_2022)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2022, file = "dataset_2022.rds")
+
