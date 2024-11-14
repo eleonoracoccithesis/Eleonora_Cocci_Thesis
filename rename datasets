@@ -33,3 +33,319 @@ View(dataset_2007)
 
 # Save the updated dataset if needed
 saveRDS(dataset_2007, file = "dataset_2007.rds")
+
+
+
+DATASET_2008
+library(dplyr)
+
+# Rename columns in dataset_2008 for consistency
+dataset_2008 <- dataset_2008 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf09b003,
+    age = cf09b004,
+    family_satisfaction = cf09b181,
+    birth_year_first_child = cf09b037,
+    future_children = cf09b128,
+    shared_friends = cf09b163,
+    baby_2008 = baby_2008,
+    partner = partner,
+    church_member = cr09b012,
+    sports_club_member = cs09b006,
+    political_party_member = cs09b046,
+    social_contacts_satisfaction = cs09b283,
+    work_satisfaction = cw09b133,
+    colleague_atmosphere_satisfaction = cw09b131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2008
+dataset_2008 <- dataset_2008 %>%
+  mutate(year = 2008)
+
+# View the updated dataset
+View(dataset_2008)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2008, file = "dataset_2008.rds")
+
+
+
+DATASET_2009
+library(dplyr)
+
+# Rename columns in dataset_2009 for consistency
+dataset_2009 <- dataset_2009 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf10c003,
+    age = cf10c004,
+    family_satisfaction = cf10c181,
+    birth_year_first_child = cf10c037,
+    future_children = cf10c128,
+    shared_friends = cf10c163,
+    baby_2009 = baby_2009,
+    partner = partner,
+    church_member = cr10c012,
+    sports_club_member = cs10c006,
+    political_party_member = cs10c046,
+    social_contacts_satisfaction = cs10c283,
+    work_satisfaction = cw10c133,
+    colleague_atmosphere_satisfaction = cw10c131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2008
+dataset_2009 <- dataset_2009 %>%
+  mutate(year = 2009)
+
+# View the updated dataset
+View(dataset_2009)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2009, file = "dataset_2009.rds")
+
+
+
+
+DATASET_2010
+library(dplyr)
+
+# Rename columns in dataset_2010 for consistency
+dataset_2010 <- dataset_2010 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf11d003,
+    age = cf11d004,
+    family_satisfaction = cf11d181,
+    birth_year_first_child = cf11d037,
+    future_children = cf11d128,
+    shared_friends = cf11d163,
+    baby_2010 = baby_2010,
+    partner = partner,
+    church_member = cr11d012,
+    sports_club_member = cs11d006,
+    political_party_member = cs11d046,
+    social_contacts_satisfaction = cs11d283,
+    work_satisfaction = cw11d133,
+    colleague_atmosphere_satisfaction = cw11d131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2010
+dataset_2010 <- dataset_2010 %>%
+  mutate(year = 2010)
+
+# View the updated dataset
+View(dataset_2010)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2010, file = "dataset_2010.rds")
+
+
+DATASET_2011
+library(dplyr)
+
+# Rename columns in dataset_2011 for consistency
+dataset_2011 <- dataset_2011 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf12e003,
+    age = cf12e004,
+    family_satisfaction = cf12e181,
+    birth_year_first_child = cf12e037,
+    future_children = cf12e128,
+    shared_friends = cf12e163,
+    baby_2011 = baby_2011,
+    partner = partner,
+    church_member = cr12e012,
+    sports_club_member = cs12e006,
+    political_party_member = cs12e046,
+    social_contacts_satisfaction = cs12e283,
+    work_satisfaction = cw12e133,
+    colleague_atmosphere_satisfaction = cw12e131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2011
+dataset_2011 <- dataset_2011 %>%
+  mutate(year = 2011)
+
+# View the updated dataset
+View(dataset_2011)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2011, file = "dataset_2011.rds")
+
+
+DATASET_2012
+library(dplyr)
+
+# Rename columns in dataset_2012 for consistency
+dataset_2012 <- dataset_2012 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf13f003,
+    age = cf13f004,
+    family_satisfaction = cf13f181,
+    birth_year_first_child = cf13f037,
+    future_children = cf13f128,
+    shared_friends = cf13f163,
+    baby_2012 = baby_2012,
+    partner = partner,
+    church_member = cr13f012,
+    sports_club_member = cs13f006,
+    political_party_member = cs13f046,
+    social_contacts_satisfaction = cs13f283,
+    work_satisfaction = cw13f133,
+    colleague_atmosphere_satisfaction = cw13f131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2012
+dataset_2012 <- dataset_2012 %>%
+  mutate(year = 2012)
+
+# View the updated dataset
+View(dataset_2012)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2012, file = "dataset_2012.rds")
+
+
+
+DATASET_2013
+library(dplyr)
+
+# Rename columns in dataset_2013 for consistency
+dataset_2013 <- dataset_2013 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf14g003,
+    age = cf14g004,
+    family_satisfaction = cf14g181,
+    birth_year_first_child = cf14g037,
+    future_children = cf14g128,
+    shared_friends = cf14g163,
+    baby_2013 = baby_2013,
+    partner = partner,
+    church_member = cr14g012,
+    sports_club_member = cs14g006,
+    political_party_member = cs14g046,
+    social_contacts_satisfaction = cs14g283,
+    work_satisfaction = cw14g133,
+    colleague_atmosphere_satisfaction = cw14g131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2013
+dataset_2013 <- dataset_2013 %>%
+  mutate(year = 2013)
+
+# View the updated dataset
+View(dataset_2013)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2013, file = "dataset_2013.rds")
+
+
+DATASET_2014
+library(dplyr)
+
+# Rename columns in dataset_2014 for consistency
+dataset_2014 <- dataset_2014 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf15h003,
+    age = cf15h004,
+    family_satisfaction = cf15h181,
+    birth_year_first_child = cf15h456,
+    future_children = cf15h128,
+    shared_friends = cf15h163,
+    baby_2014 = baby_2014,
+    partner = partner,
+    church_member = cr15h012,
+    sports_club_member = cs15h006,
+    political_party_member = cs15h046,
+    social_contacts_satisfaction = cs15h283,
+    work_satisfaction = cw15h133,
+    colleague_atmosphere_satisfaction = cw15h131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2014
+dataset_2014 <- dataset_2014 %>%
+  mutate(year = 2014)
+
+# View the updated dataset
+View(dataset_2014)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2014, file = "dataset_2014.rds")
+
+
+
+DATASET_2015
+library(dplyr)
+
+# Rename columns in dataset_2015 for consistency
+dataset_2015 <- dataset_2015 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf16i003,
+    age = cf16i004,
+    family_satisfaction = cf16i181,
+    birth_year_first_child = cf16i456,
+    future_children = cf16i128,
+    shared_friends = cf16i163,
+    baby_2015 = baby_2015,
+    partner = partner,
+    church_member = cr16i012,
+    sports_club_member = cs16i006,
+    political_party_member = cs16i046,
+    social_contacts_satisfaction = cs16i283,
+    work_satisfaction = cw16i133,
+    colleague_atmosphere_satisfaction = cw16i131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2015
+dataset_2015 <- dataset_2015 %>%
+  mutate(year = 2015)
+
+# View the updated dataset
+View(dataset_2015)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2015, file = "dataset_2015.rds")
+
+
+
+DATASET_2016
+library(dplyr)
+
+# Rename columns in dataset_2016 for consistency
+dataset_2016 <- dataset_2016 %>%
+  rename(
+    ID = nomem_encr,
+    gender = cf17j003,
+    age = cf17j004,
+    family_satisfaction = cf17j181,
+    birth_year_first_child = cf17j456,
+    future_children = cf17j128,
+    shared_friends = cf17j163,
+    baby_2016 = baby_2016,
+    partner = partner,
+    church_member = cr17j012,
+    sports_club_member = cs17j006,
+    political_party_member = cs17j046,
+    social_contacts_satisfaction = cs17j283,
+    work_satisfaction = cw17j133,
+    colleague_atmosphere_satisfaction = cw17j131
+  ) %>%
+
+  # Add a year column indicating that this dataset is from the year 2016
+dataset_2016 <- dataset_2016 %>%
+  mutate(year = 2016)
+
+# View the updated dataset
+View(dataset_2016)
+
+# Save the updated dataset if needed
+saveRDS(dataset_2016, file = "dataset_2016.rds")
+
+
+DATASET_2017
