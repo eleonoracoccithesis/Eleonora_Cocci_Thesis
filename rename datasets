@@ -463,7 +463,7 @@ dataset_2020 <- dataset_2020 %>%
     birth_year_first_child = cf21n456,
     future_children = cf21n128,
     shared_friends = cf21n163,
-    baby_2021 = baby_2020,
+    baby_2020 = baby_2020,
     partner = partner,
     church_member = cr21n143,
     sports_club_member = cs21n006,
