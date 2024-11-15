@@ -1,0 +1,17 @@
+library(dplyr)
+
+# Define the 16 columns to retain with the original names
+columns_to_keep <- c("ID", "gender", "age", "family_satisfaction", "birth_year_first_child", 
+                     "future_children", "shared_friends", "yes_no_baby", "partner", 
+                     "church_member", "sports_club_member", "political_party_member", 
+                     "social_contacts_satisfaction", "work_satisfaction", 
+                     "colleague_atmosphere_satisfaction", "year")
+
+# List of datasets from 2007 to 2022
+datasets <- list(dataset_2007, dataset_2008, dataset_2009, dataset_2010, dataset_2011, 
+                 dataset_2012, dataset_2013, dataset_2014, dataset_2015, dataset_2016, 
+                 dataset_2017, dataset_2018, dataset_2019, dataset_2020, dataset_2021, 
+                 dataset_2022)
+
+# Use a function explicitly instead of '~' for compatibility
+combined_data <- bind_rows(lapply(datasets, function(x) select(x, all_of(columns_to_keep))))
