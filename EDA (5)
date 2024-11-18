@@ -135,8 +135,10 @@ Data distribution of numerical variables: age
 Data distribution of ordinal variables
 > ggplot(melted_data, aes(x = as.factor(Satisfaction_Level), fill = Variable)) +
 +     geom_bar(alpha = 0.7, position = "stack") +
-+     facet_wrap(~Variable, scales = "free_y") + # One bar plot per variable
++     facet_wrap(~Variable, scales = "free_y") + 
 +     labs(x = "Satisfaction Level", y = "Frequency") +
 +     theme_minimal()
+
+
 
 
