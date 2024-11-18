@@ -187,7 +187,7 @@ melted_data$Category <- unlist(sapply(1:nrow(melted_data), function(i) {
 ggplot(melted_data, aes(x = Category, fill = Variable)) +
   geom_bar(alpha = 0.7) +
   facet_wrap(~Variable, scales = "free_x") +
-  labs(title = "Distribution of Categorical Variables", x = "Category", y = "Frequency") +
+  labs(x = "Category", y = "Frequency") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotate x-axis labels
 
