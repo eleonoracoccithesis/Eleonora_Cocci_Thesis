@@ -192,3 +192,24 @@ ggplot(melted_data, aes(x = Category, fill = Variable)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotate x-axis labels
 
 
+Check for missing values by variable type
+# Lists of variables by type
+numerical_cols <- c("ID", "age", "birth_year_first_child", "year")
+ordinal_cols <- c("social_contacts_satisfaction", "family_satisfaction", 
+                  "work_satisfaction", "colleague_atmosphere_satisfaction")
+categorical_cols <- c("partner", "church_member", "sports_club_member", 
+                      "political_party_member", "future_children", 
+                      "shared_friends", "yes_no_baby")
+
+# Check missing values for numerical, ordinal, and categorical separately
+missing_numerical <- colSums(is.na(combined_data[, numerical_cols]))
+missing_ordinal <- colSums(is.na(combined_data[, ordinal_cols]))
+missing_categorical <- colSums(is.na(combined_data[, categorical_cols]))
+
+# Print summaries
+list(
+  Numerical = missing_numerical,
+  Ordinal = missing_ordinal,
+  Categorical = missing_categorical
+)
+
