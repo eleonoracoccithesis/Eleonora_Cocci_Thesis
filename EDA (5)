@@ -197,6 +197,11 @@ ggplot(melted_data, aes(x = Category, fill = Variable)) +
 
 
 Check for missing values by variable type
+# Check missing values for numerical, ordinal, and categorical separately
+missing_numerical <- colSums(is.na(combined_data[, numerical_cols]))
+missing_ordinal <- colSums(is.na(combined_data[, ordinal_cols]))
+missing_categorical <- colSums(is.na(combined_data[, categorical_cols]))
+
 # Combine missing value summaries into a single data frame
 missing_summary <- data.frame(
   Variable = c(names(missing_numerical), names(missing_ordinal), names(missing_categorical)),
