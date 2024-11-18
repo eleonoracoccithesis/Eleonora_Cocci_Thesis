@@ -197,23 +197,15 @@ ggplot(melted_data, aes(x = Category, fill = Variable)) +
 
 
 Check for missing values by variable type
-# Lists of variables by type
-numerical_cols <- c("ID", "age", "birth_year_first_child", "year")
-ordinal_cols <- c("social_contacts_satisfaction", "family_satisfaction", 
-                  "work_satisfaction", "colleague_atmosphere_satisfaction")
-categorical_cols <- c("partner", "church_member", "sports_club_member", 
-                      "political_party_member", "future_children", 
-                      "shared_friends", "yes_no_baby")
-
-# Check missing values for numerical, ordinal, and categorical separately
-missing_numerical <- colSums(is.na(combined_data[, numerical_cols]))
-missing_ordinal <- colSums(is.na(combined_data[, ordinal_cols]))
-missing_categorical <- colSums(is.na(combined_data[, categorical_cols]))
-
-# Print summaries
-list(
-  Numerical = missing_numerical,
-  Ordinal = missing_ordinal,
-  Categorical = missing_categorical
+# Combine missing value summaries into a single data frame
+missing_summary <- data.frame(
+  Variable = c(names(missing_numerical), names(missing_ordinal), names(missing_categorical)),
+  Missing_Count = c(missing_numerical, missing_ordinal, missing_categorical),
+  Type = c(rep("Numerical", length(missing_numerical)),
+           rep("Ordinal", length(missing_ordinal)),
+           rep("Categorical", length(missing_categorical)))
 )
 
+#tibble output
+missing_summary <- as_tibble(missing_summary)
+missing_summary
