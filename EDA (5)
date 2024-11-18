@@ -141,4 +141,54 @@ Data distribution of ordinal variables
 
 
 
+Data distribution of categorical variables
+library(ggplot2)
+library(reshape2)
+
+# List of categorical variables
+categorical_cols <- c("partner", "church_member", "sports_club_member", 
+                      "political_party_member", "future_children", "shared_friends", "yes_no_baby")
+
+# Reshape data into long format for faceted bar plots
+categorical_data <- combined_data[, categorical_cols]
+melted_data <- melt(categorical_data, variable.name = "Variable", value.name = "Category")
+
+# Define custom labels for categories
+category_labels <- list(
+  partner = c(`0` = "No", `1` = "Yes"),
+  church_member = c(`1` = "Yes", `2` = "No"),
+  sports_club_member = c(`0` = "No", `1` = "Yes"),
+  political_party_member = c(`0` = "No", `1` = "Yes"),
+  future_children = c(`1` = "Yes", `2` = "No", `3` = "I don't know"),
+  shared_friends = c(
+    `1` = "Own Friends", 
+    `2` = "Mostly Own",
+    `3` = "Mostly Shared",
+    `4` = "Shared Friends",
+    `5` = "No Friends"
+  ),
+  yes_no_baby = c(`0` = "No", `1` = "Yes")
+)
+
+# Apply custom labels dynamically to each variable
+melted_data$Category <- unlist(sapply(1:nrow(melted_data), function(i) {
+  variable <- melted_data$Variable[i]
+  value <- as.character(melted_data$Category[i])
+  
+  # If variable has custom labels, map the value; otherwise, leave unchanged
+  if (variable %in% names(category_labels)) {
+    return(category_labels[[variable]][value])
+  } else {
+    return(value)
+  }
+}))
+
+# Faceted bar plot with updated labels and rotated x-axis text
+ggplot(melted_data, aes(x = Category, fill = Variable)) +
+  geom_bar(alpha = 0.7) +
+  facet_wrap(~Variable, scales = "free_x") +
+  labs(title = "Distribution of Categorical Variables", x = "Category", y = "Frequency") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotate x-axis labels
+
 
