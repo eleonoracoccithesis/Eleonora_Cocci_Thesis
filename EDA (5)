@@ -256,3 +256,66 @@ ggcorrplot(
   theme_minimal(base_size = 12) +
   theme(plot.title = element_blank(), axis.title = element_blank()) +
   coord_fixed()
+
+
+
+Categorical-categorical
+# Load necessary libraries
+library(vcd)      # For assocstats (Cramér's V calculation)
+library(ggplot2)  # For plotting
+library(reshape2) # For reshaping the matrix
+library(dplyr)    # For data manipulation
+
+# Define categorical variables
+categorical_vars <- c("partner", "church_member", "sports_club_member", 
+                      "political_party_member", "future_children", "shared_friends", "yes_no_baby")
+
+# Function to compute Cramér's V
+cramers_v <- function(var1, var2) {
+  tbl <- table(var1, var2)
+  chisq <- suppressWarnings(chisq.test(tbl)$statistic)
+  n <- sum(tbl)
+  return(sqrt(chisq / (n * (min(nrow(tbl), ncol(tbl)) - 1))))
+}
+
+# Create Cramér's V matrix
+n <- length(categorical_vars)
+cramers_matrix <- matrix(NA, nrow = n, ncol = n, dimnames = list(categorical_vars, categorical_vars))
+for (i in 1:n) {
+  for (j in i:n) {
+    cramers_matrix[i, j] <- cramers_v(combined_data[[categorical_vars[i]]], combined_data[[categorical_vars[j]]])
+    cramers_matrix[j, i] <- cramers_matrix[i, j]
+  }
+}
+
+# Mask upper triangle by setting upper-triangular values to NA
+cramers_matrix[upper.tri(cramers_matrix)] <- NA
+
+# Reshape matrix for ggplot2
+cramers_melt <- melt(cramers_matrix, na.rm = TRUE)
+
+# Plot lower triangular heatmap with values included
+ggplot(cramers_melt, aes(Var1, Var2, fill = value)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = round(value, 2)), color = "white", size = 4) + # Add values to the boxes
+  
+  # Enhanced gradient for better blue contrast
+  scale_fill_gradientn(
+    colors = c("darkblue", "blue", "skyblue", "lightblue", "red"),
+    values = scales::rescale(c(0, 0.25, 0.5, 0.75, 1)), # Custom stops
+    name = "Cramér's V"
+  ) +
+  
+  # Labels and theme
+  labs(
+    x = NULL,
+    y = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid = element_blank()
+  )
+
+
+
