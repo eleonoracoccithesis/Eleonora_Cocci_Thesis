@@ -233,3 +233,26 @@ ggplot(combined_data, aes(x = age, y = birth_year_first_child)) +
 Correlation coefficient:
 cor(combined_data$age, combined_data$birth_year_first_child, use = "pairwise.complete.obs")
 [1] -0.3340627
+
+
+
+Ordinal-ordinal
+library(ggcorrplot)
+
+# Compute correlation matrix for ordinal variables
+cor_matrix <- cor(combined_data[, c("social_contacts_satisfaction", "family_satisfaction", 
+                                    "work_satisfaction", "colleague_atmosphere_satisfaction")],
+                  use = "pairwise.complete.obs")
+
+# Generate compact lower triangle plot
+ggcorrplot(
+  cor_matrix,
+  type = "lower",
+  lab = TRUE,
+  lab_size = 4,
+  tl.cex = 8,
+  colors = c("blue", "white", "red")
+) +
+  theme_minimal(base_size = 12) +
+  theme(plot.title = element_blank(), axis.title = element_blank()) +
+  coord_fixed()
