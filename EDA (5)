@@ -214,3 +214,22 @@ missing_summary <- data.frame(
 #tibble output
 missing_summary <- as_tibble(missing_summary)
 missing_summary
+
+
+
+Exploring relationships between variables:
+Numerical-numerical
+
+ggplot(combined_data, aes(x = age, y = birth_year_first_child)) +
+  geom_jitter(width = 0.3, height = 0.3, alpha = 0.5, size = 1.5) +
+  geom_smooth(method = "lm", color = "red", size = 1.2, se = FALSE) +
+  labs(
+    x = "Age",
+    y = "Birth_year_first_child"
+  ) +
+  theme_minimal(base_size = 14)
+
+
+Correlation coefficient:
+cor(combined_data$age, combined_data$birth_year_first_child, use = "pairwise.complete.obs")
+[1] -0.3340627
