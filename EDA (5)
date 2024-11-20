@@ -318,4 +318,38 @@ ggplot(cramers_melt, aes(Var1, Var2, fill = value)) +
   )
 
 
+Ordinal-categorical:
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+# Prepare the data for the heatmap
+heatmap_data <- combined_data %>%
+  select(future_children, social_contacts_satisfaction, family_satisfaction, 
+         work_satisfaction, colleague_atmosphere_satisfaction) %>%
+  group_by(future_children) %>%
+  summarise(across(everything(), ~ mean(.x, na.rm = TRUE))) %>%
+  pivot_longer(cols = -future_children, names_to = "Satisfaction_Variable", values_to = "Mean_Score") %>%
+  mutate(
+    future_children = ifelse(is.na(future_children), "NA", as.character(future_children)), # Handle NA levels
+    future_children = factor(future_children, levels = c("1", "2", "3", "NA"), 
+                             labels = c("Yes", "No", "I don't know", "NA")) # Convert to factor
+  )
+
+# Create the heatmap with labels
+ggplot(heatmap_data, aes(x = Satisfaction_Variable, y = future_children, fill = Mean_Score)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = round(Mean_Score, 1)), color = "white", size = 4) + # Add mean score labels
+  scale_fill_gradient(low = "blue", high = "red", name = "Mean Score") +
+  labs(
+    x = "Satisfaction Variables",
+    y = "Future Children",
+    title = NULL # No title
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 10, face = "bold"),
+    axis.text.y = element_text(size = 10, face = "bold"),
+    legend.position = "right"
+  )
 
