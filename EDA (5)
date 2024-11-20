@@ -353,3 +353,34 @@ ggplot(heatmap_data, aes(x = Satisfaction_Variable, y = future_children, fill = 
     legend.position = "right"
   )
 
+
+
+Numerical-categorical:
+library(ggplot2)
+library(dplyr)
+
+# Filter the dataset to include only "Yes" and "No" for future_children
+filtered_data <- combined_data %>%
+  filter(future_children %in% c(1, 2)) %>%
+  mutate(future_children = factor(
+    future_children,
+    levels = c(1, 2),
+    labels = c("Yes", "No")
+  ))
+
+# Boxplot of Age by Future Children with median labels
+ggplot(filtered_data, aes(x = future_children, y = age, fill = future_children)) +
+  geom_boxplot(outlier.color = "red", outlier.size = 2, alpha = 0.7) +
+  stat_summary(fun = median, geom = "text", aes(label = round(..y.., 1)), vjust = -1.5, color = "black", size = 4) +
+  labs(
+    x = "Future Children",
+    y = "Age",
+    
+  ) +
+  scale_fill_brewer(palette = "Set2", name = "Future Children") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 10, face = "bold"),
+    axis.text.y = element_text(size = 10, face = "bold"),
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5)
+  )
