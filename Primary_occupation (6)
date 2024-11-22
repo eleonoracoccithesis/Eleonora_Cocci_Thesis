@@ -43,3 +43,54 @@ Work_and_schooling_2008 <- Work_and_schooling_2008 %>%
 
 # Check the distribution of the new column
 table(Work_and_schooling_2008$primary_occupation_2007, useNA = "ifany")
+
+
+
+2008:
+
+library(dplyr)
+
+# Ensure all relevant columns are numeric (convert '1' and '0' properly)
+Work_and_schooling_2009 <- Work_and_schooling_2009 %>%
+  mutate(across(starts_with("cw09b"), ~ as.numeric(as.character(.x))))
+
+# Define the mapping for primary occupation categories
+occupation_mapping_2008 <- list(
+  `cw09b088` = c(1, 3),  # Paid employment
+  `cw09b089` = 2,        # Paid employment (past)
+  `cw09b090` = 11,       # Unpaid work while retaining benefit
+  `cw09b091` = 4,        # Job seeker following job loss
+  `cw09b092` = 6,        # Exempted from job seeking following job loss
+  `cw09b093` = 5,        # First-time job seeker
+  `cw09b094` = 4,        # Seeking work following interruption
+  `cw09b095` = c(7, 14), # Attends school or studying
+  `cw09b096` = 8,        # Takes care of housekeeping
+  `cw09b097` = 13,       # Lives off private means
+  `cw09b098` = 9,        # Early retirement
+  `cw09b099` = 9,        # Pensioner
+  `cw09b100` = 10,       # Work disability
+  `cw09b101` = 12,       # Voluntary work
+  `cw09b102` = 1         # Paid work, seeking more work
+)
+
+# Function to compute primary occupation category for each row
+get_primary_occupation <- function(row) {
+  for (var in names(occupation_mapping_2008)) {
+    if (!is.na(row[[var]]) && row[[var]] == 1) {  # If the value is '1' (yes)
+      return(min(occupation_mapping_2008[[var]])) # Return the smallest valid category
+    }
+  }
+  return(NA) # If no occupation is selected, return NA
+}
+
+# Apply the mapping function row-wise
+Work_and_schooling_2009 <- Work_and_schooling_2009 %>%
+  rowwise() %>%
+  mutate(primary_occupation_2008 = get_primary_occupation(pick(everything()))) %>%  # Use `pick()` instead of `cur_data()`
+  ungroup()
+
+# Check the distribution of the new column
+table(Work_and_schooling_2009$primary_occupation_2008, useNA = "ifany")
+
+
+
