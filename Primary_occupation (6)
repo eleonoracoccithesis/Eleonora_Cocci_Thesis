@@ -94,3 +94,12 @@ table(Work_and_schooling_2009$primary_occupation_2008, useNA = "ifany")
 
 
 
+
+# Create the primary_occupation column in dataset_2007 by joining on ID and nomem_encr
+dataset_2007 <- dataset_2007 %>%
+  left_join(
+    Work_and_schooling_2008 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
+
+
