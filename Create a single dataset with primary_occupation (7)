@@ -1,1 +1,15 @@
+library(dplyr)
+
+# Ensure all datasets have the primary_occupation column
+datasets <- lapply(datasets, function(dataset) {
+  if (!"primary_occupation" %in% colnames(dataset)) {
+    dataset <- dataset %>% mutate(primary_occupation = NA)
+  }
+  return(dataset)
+})
+
+# Combine the datasets, keeping only the specified columns
+combined_data <- bind_rows(lapply(datasets, function(x) select(x, all_of(columns_to_keep))))
+
+
 
