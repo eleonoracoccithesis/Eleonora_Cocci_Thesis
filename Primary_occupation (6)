@@ -95,7 +95,7 @@ table(Work_and_schooling_2009$primary_occupation_2008, useNA = "ifany")
 
 
 
-# Create the primary_occupation column in dataset_2007 by joining on ID and nomem_encr
+For 2007:
 dataset_2007 <- dataset_2007 %>%
   left_join(
     Work_and_schooling_2008 %>% select(nomem_encr, primary_occupation),
@@ -103,3 +103,121 @@ dataset_2007 <- dataset_2007 %>%
   )
 
 
+For 2008:
+dataset_2008 <- dataset_2008 %>%
+  left_join(
+    Work_and_schooling_2009 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
+
+
+For 2009:
+dataset_2009 <- dataset_2009 %>%
+  left_join(
+    Work_and_schooling_2010 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
+
+
+For 2010:
+dataset_2010 <- dataset_2010 %>%
+  left_join(
+    Work_and_schooling_2011 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
+
+
+For 2011:
+dataset_2011 <- dataset_2011 %>%
+  left_join(
+    Work_and_schooling_2012 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
+
+
+For 2012:
+dataset_2012 <- dataset_2012 %>%
+  left_join(
+    Work_and_schooling_2013 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
+
+
+For 2013:
+dataset_2013 <- dataset_2013 %>%
+  left_join(
+    Work_and_schooling_2014 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
+
+
+For 2014:
+dataset_2014 <- dataset_2014 %>%
+  left_join(
+    Work_and_schooling_2015 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
+
+
+For 2015:
+dataset_2015 <- dataset_2015 %>%
+  left_join(
+    Work_and_schooling_2016 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
+
+
+For 2016:
+dataset_2016 <- dataset_2016 %>%
+  left_join(
+    Work_and_schooling_2017 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
+
+
+For 2017:
+dataset_2017 <- dataset_2017 %>%
+  left_join(
+    Work_and_schooling_2018 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
+
+
+For 2018:
+dataset_2018 <- dataset_2018 %>%
+  left_join(
+    Work_and_schooling_2019 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
+
+
+For 2019:
+dataset_2019 <- dataset_2019 %>%
+  left_join(
+    Work_and_schooling_2020 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
+
+
+For 2020:
+dataset_2020 <- dataset_2020 %>%
+  left_join(
+    Work_and_schooling_2021 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
+
+
+For 2021:
+dataset_2021 <- dataset_2021 %>%
+  left_join(
+    Work_and_schooling_2022 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
+
+
+For 2022:
+dataset_2022 <- dataset_2022 %>%
+  left_join(
+    Work_and_schooling_2023 %>% select(nomem_encr, primary_occupation),
+    by = c("ID" = "nomem_encr")
+  )
