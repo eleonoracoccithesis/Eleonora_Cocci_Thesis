@@ -1,0 +1,45 @@
+2007:
+
+library(dplyr)
+
+# Ensure all relevant columns are numeric (convert '1' and '0' properly)
+Work_and_schooling_2008 <- Work_and_schooling_2008 %>%
+  mutate(across(starts_with("cw08a"), ~ as.numeric(as.character(.x))))
+
+# Define the mapping for primary occupation categories
+occupation_mapping_2007 <- list(
+  `cw08a088` = c(1, 3),  # Paid employment
+  `cw08a089` = 2,        # Paid employment (past)
+  `cw08a090` = 11,       # Unpaid work while retaining benefit
+  `cw08a091` = 4,        # Job seeker following job loss
+  `cw08a092` = 6,        # Exempted from job seeking following job loss
+  `cw08a093` = 5,        # First-time job seeker
+  `cw08a094` = 4,        # Seeking work following interruption
+  `cw08a095` = c(7, 14), # Attends school or studying
+  `cw08a096` = 8,        # Takes care of housekeeping
+  `cw08a097` = 13,       # Lives off private means
+  `cw08a098` = 9,        # Early retirement
+  `cw08a099` = 9,        # Pensioner
+  `cw08a100` = 10,       # Work disability
+  `cw08a101` = 12,       # Voluntary work
+  `cw08a102` = 1         # Paid work, seeking more work
+)
+
+# Function to compute primary occupation category for each row
+get_primary_occupation <- function(row) {
+  for (var in names(occupation_mapping_2007)) {
+    if (!is.na(row[[var]]) && row[[var]] == 1) {  # If the value is '1' (yes)
+      return(min(occupation_mapping_2007[[var]])) # Return the smallest valid category
+    }
+  }
+  return(NA) # If no occupation is selected, return NA
+}
+
+# Apply the mapping function row-wise
+Work_and_schooling_2008 <- Work_and_schooling_2008 %>%
+  rowwise() %>%
+  mutate(primary_occupation_2007 = get_primary_occupation(pick(everything()))) %>%  # Use `pick()` instead of `cur_data()`
+  ungroup()
+
+# Check the distribution of the new column
+table(Work_and_schooling_2008$primary_occupation_2007, useNA = "ifany")
