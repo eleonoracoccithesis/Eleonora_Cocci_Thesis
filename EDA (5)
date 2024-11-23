@@ -1,7 +1,7 @@
 dimensions of dataset:
 
 > dim(combined_data) 
-[1] 6563   17
+[1] 6563   16
 
 
 Summary statistics for numerical columns: No ID and year because irrelevant
