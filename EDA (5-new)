@@ -92,3 +92,41 @@ x
          7          8          9         10       <NA> 
 14.4750876 20.2498857 11.1229621  4.5710803 38.9151303
 
+
+
+
+
+
+Check for missing values by type:
+# Define column groups
+ordinal_cols <- c("work_satisfaction", "colleague_atmosphere_satisfaction", 
+                  "social_contacts_satisfaction", "family_satisfaction") # Add more ordinal columns if needed
+categorical_cols <- c("yes_no_baby", "partner", "church_member", "sports_club_member", 
+                      "political_party_member", "future_children", "shared_friends", "primary_occupation") # Add more categorical columns if needed
+
+# Check missing values for ordinal and categorical separately
+missing_ordinal <- colSums(is.na(combined_data[, ordinal_cols]))
+missing_categorical <- colSums(is.na(combined_data[, categorical_cols]))
+
+# Combine missing value summaries into a single data frame
+missing_summary <- data.frame(
+  Variable = c(
+    names(missing_ordinal),
+    names(missing_categorical)
+  ),
+  Missing_Count = c(
+    missing_ordinal,
+    missing_categorical
+  ),
+  Type = c(
+    rep("Ordinal", length(missing_ordinal)),
+    rep("Categorical", length(missing_categorical))
+  )
+)
+
+# Convert to tibble for better display
+missing_summary <- as_tibble(missing_summary)
+missing_summary
+
+
+
