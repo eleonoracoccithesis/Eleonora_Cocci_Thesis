@@ -172,3 +172,92 @@ ggplot(heatmap_data, aes(x = Satisfaction_Variable, y = yes_no_baby, fill = Mean
   )
 
 
+
+
+
+
+numerical-categorical
+library(ggplot2)
+
+# Create the density plot with `yes_no_baby`
+ggplot(combined_data, aes(x = age, fill = as.factor(yes_no_baby))) +
+  geom_density(alpha = 0.7) +
+  labs(
+    x = "Age",
+    y = "Density",
+    fill = "Yes or No Baby"
+  ) +
+  scale_fill_brewer(palette = "Set2", labels = c("No", "Yes")) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 10, face = "bold"),
+    axis.text.y = element_text(size = 10, face = "bold"),
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5)
+  )
+
+
+
+
+categorical-categorical:
+# Load required libraries
+library(ggplot2)
+library(dplyr)
+library(reshape2)
+
+# Convert variables to factors if necessary
+combined_data <- combined_data %>%
+  mutate(
+    yes_no_baby = as.factor(yes_no_baby),
+    primary_occupation = as.factor(primary_occupation),
+    future_children = as.factor(future_children),
+    partner = as.factor(partner)
+  )
+
+# Define the variables to include in the heatmap
+categorical_vars <- c("yes_no_baby", "primary_occupation", "future_children", "partner")
+
+# Function to calculate Cramér's V
+cramers_v <- function(var1, var2) {
+  tbl <- table(var1, var2)
+  chisq <- suppressWarnings(chisq.test(tbl)$statistic)
+  n <- sum(tbl)
+  return(sqrt(chisq / (n * (min(nrow(tbl), ncol(tbl)) - 1))))
+}
+
+# Create Cramér's V matrix
+cramers_matrix <- matrix(NA, nrow = length(categorical_vars), ncol = length(categorical_vars), 
+                         dimnames = list(categorical_vars, categorical_vars))
+
+for (i in 1:length(categorical_vars)) {
+  for (j in i:length(categorical_vars)) {
+    cramers_matrix[i, j] <- cramers_v(
+      combined_data[[categorical_vars[i]]],
+      combined_data[[categorical_vars[j]]]
+    )
+    cramers_matrix[j, i] <- cramers_matrix[i, j]
+  }
+}
+
+# Mask the upper triangle for triangular heatmap
+cramers_matrix[upper.tri(cramers_matrix)] <- NA
+
+# Melt the matrix for ggplot
+melted_cramers <- melt(cramers_matrix, na.rm = TRUE)
+
+# Generate the triangular heatmap
+ggplot(melted_cramers, aes(x = Var2, y = Var1, fill = value)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = round(value, 2)), size = 4, color = "white") +
+  scale_fill_gradient(low = "blue", high = "red", name = "Cramér's V") +
+  labs(
+    x = NULL,
+    y = NULL,
+    title = "Cramér's V Heatmap (Triangular)"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.text.y = element_text(size = 10, face = "bold"),
+    legend.position = "right"
+  ) +
+  coord_fixed()
