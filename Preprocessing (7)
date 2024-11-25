@@ -1,1 +1,44 @@
+handling missing values:
+for categorical and ordinal values (no primary_occupation, no work_satisfaction, and no colleague_atmosphere_satisfaction)
+
+library(dplyr)
+library(haven)  # Ensure haven is loaded for as_factor()
+
+# Convert haven_labelled variables to factors
+converted_data <- combined_data %>%
+  mutate(
+    partner = as_factor(partner),
+    church_member = as_factor(church_member),
+    sports_club_member = as_factor(sports_club_member),
+    political_party_member = as_factor(political_party_member),
+    future_children = as_factor(future_children),
+    shared_friends = as_factor(shared_friends),
+    social_contacts_satisfaction = as.numeric(as_factor(social_contacts_satisfaction)),
+    family_satisfaction = as.numeric(as_factor(family_satisfaction))
+  )
+
+# Function to calculate mode
+get_mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+# Impute missing values for categorical and ordinal variables
+preprocessed_data <- converted_data %>%
+  mutate(
+    # Impute categorical variables with mode
+    partner = ifelse(is.na(partner), get_mode(partner), partner),
+    church_member = ifelse(is.na(church_member), get_mode(church_member), church_member),
+    sports_club_member = ifelse(is.na(sports_club_member), get_mode(sports_club_member), sports_club_member),
+    political_party_member = ifelse(is.na(political_party_member), get_mode(political_party_member), political_party_member),
+    future_children = ifelse(is.na(future_children), get_mode(future_children), future_children),
+    shared_friends = ifelse(is.na(shared_friends), get_mode(shared_friends), shared_friends),
+
+    # Impute ordinal variables with median
+    social_contacts_satisfaction = ifelse(is.na(social_contacts_satisfaction), median(social_contacts_satisfaction, na.rm = TRUE), social_contacts_satisfaction),
+    family_satisfaction = ifelse(is.na(family_satisfaction), median(family_satisfaction, na.rm = TRUE), family_satisfaction)
+  )
+
+# Check updated missing values
+colSums(is.na(preprocessed_data))
 
