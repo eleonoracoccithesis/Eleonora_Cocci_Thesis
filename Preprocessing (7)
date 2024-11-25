@@ -39,6 +39,100 @@ preprocessed_data <- converted_data %>%
     family_satisfaction = ifelse(is.na(family_satisfaction), median(family_satisfaction, na.rm = TRUE), family_satisfaction)
   )
 
-# Check updated missing values
-colSums(is.na(preprocessed_data))
+# Load necessary library
+library(tibble)
+
+# Define lists of categorical and ordinal variables
+categorical_vars <- c("partner", "church_member", "sports_club_member", 
+                      "political_party_member", "future_children", 
+                      "shared_friends", "primary_occupation")
+ordinal_vars <- c("social_contacts_satisfaction", "family_satisfaction", 
+                  "work_satisfaction", "colleague_atmosphere_satisfaction")
+
+# Compute missing values for categorical and ordinal variables separately
+missing_categorical <- colSums(is.na(preprocessed_data[categorical_vars]))
+missing_ordinal <- colSums(is.na(preprocessed_data[ordinal_vars]))
+
+# Combine results into a tibble for better display
+missing_summary <- tibble(
+  Variable = c(names(missing_ordinal), names(missing_categorical)),
+  Missing_Count = c(missing_ordinal, missing_categorical),
+  Type = c(rep("Ordinal", length(missing_ordinal)),
+           rep("Categorical", length(missing_categorical)))
+)
+
+# Display the missing summary
+missing_summary
+
+
+
+
+
+
+handling missing values:
+for primary_occupation, work_satisfaction, and colleague_atmosphere_satisfaction
+
+library(dplyr)
+library(haven)  # For handling labeled variables
+
+# Calculate proportions for non-working categories
+non_working_categories <- c(4, 5, 6, 7, 9, 10, 11, 12, 13, 14)
+category_proportions <- preprocessed_data %>%
+  filter(primary_occupation %in% non_working_categories) %>%
+  count(primary_occupation) %>%
+  mutate(Proportion = n / sum(n))
+
+# Function to assign missing values proportionally
+assign_proportions <- function(data, proportions) {
+  missing_count <- sum(is.na(data$primary_occupation))
+  sampled_values <- sample(
+    proportions$primary_occupation, 
+    size = missing_count, 
+    replace = TRUE, 
+    prob = proportions$Proportion
+  )
+  data$primary_occupation[is.na(data$primary_occupation)] <- sampled_values
+  return(data)
+}
+
+# Impute missing primary_occupation proportionally to non-working categories
+preprocessed_data <- assign_proportions(preprocessed_data, category_proportions)
+
+# Impute ordinal variables for working categories
+preprocessed_data <- preprocessed_data %>%
+  mutate(
+    work_satisfaction = ifelse(
+      is.na(work_satisfaction) & primary_occupation %in% c(1, 2, 3, 8),
+      median(work_satisfaction, na.rm = TRUE),
+      work_satisfaction
+    ),
+    colleague_atmosphere_satisfaction = ifelse(
+      is.na(colleague_atmosphere_satisfaction) & primary_occupation %in% c(1, 2, 3, 8),
+      median(colleague_atmosphere_satisfaction, na.rm = TRUE),
+      colleague_atmosphere_satisfaction
+    )
+  )
+
+# Check the updated missing values summary
+missing_summary <- preprocessed_data %>%
+  summarise(across(everything(), ~ sum(is.na(.)))) %>%
+  pivot_longer(cols = everything(), names_to = "Variable", values_to = "Missing_Count") %>%
+  mutate(
+    Type = case_when(
+      Variable %in% c("social_contacts_satisfaction", "family_satisfaction", 
+                      "work_satisfaction", "colleague_atmosphere_satisfaction") ~ "Ordinal",
+      TRUE ~ "Categorical"
+    )
+  ) %>%
+  arrange(desc(Missing_Count))
+
+# Display the updated missing summary
+missing_summary
+
+
+
+saveRDS(preprocessed_data, file = "preprocessed_data.rds")
+
+
+
 
