@@ -252,7 +252,7 @@ ggplot(melted_cramers, aes(x = Var2, y = Var1, fill = value)) +
   labs(
     x = NULL,
     y = NULL,
-    title = "Cramér's V Heatmap (Triangular)"
+    
   ) +
   theme_minimal() +
   theme(
