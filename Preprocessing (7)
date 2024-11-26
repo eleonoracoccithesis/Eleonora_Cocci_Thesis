@@ -143,3 +143,32 @@ preprocessed_data <- preprocessed_data %>%
     colleague_atmosphere_satisfaction = ifelse(primary_occupation %in% non_working_categories & is.na(colleague_atmosphere_satisfaction), -1, colleague_atmosphere_satisfaction)
   )
 
+
+
+
+check NAs
+# Define variable types
+numerical_vars <- c("age", "birth_year_first_child", "year", "ID")
+ordinal_vars <- c("social_contacts_satisfaction", "family_satisfaction", "work_satisfaction", "colleague_atmosphere_satisfaction")
+categorical_vars <- c("gender", "future_children", "shared_friends", "yes_no_baby", "partner", 
+                      "church_member", "sports_club_member", "political_party_member", "primary_occupation")
+
+
+
+# Check updated missing values summary
+missing_summary <- preprocessed_data %>%
+  summarise(across(everything(), ~ sum(is.na(.)))) %>%
+  pivot_longer(cols = everything(), names_to = "Variable", values_to = "Missing_Count") %>%
+  mutate(
+    Type = case_when(
+      Variable %in% numerical_vars ~ "Numerical",
+      Variable %in% ordinal_vars ~ "Ordinal",
+      Variable %in% categorical_vars ~ "Categorical",
+      TRUE ~ "Unknown"
+    )
+  ) %>%
+  arrange(desc(Missing_Count))
+
+# Print the missing summary
+print(missing_summary)
+
