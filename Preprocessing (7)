@@ -134,5 +134,12 @@ missing_summary
 saveRDS(preprocessed_data, file = "preprocessed_data.rds")
 
 
+assigning -1 to work_satisfaction and colleague_atmosphere_satisfaction
+non_working_categories <- c(4, 5, 6, 7, 9, 10, 11, 12, 13, 14)
 
+preprocessed_data <- preprocessed_data %>%
+  mutate(
+    work_satisfaction = ifelse(primary_occupation %in% non_working_categories & is.na(work_satisfaction), -1, work_satisfaction),
+    colleague_atmosphere_satisfaction = ifelse(primary_occupation %in% non_working_categories & is.na(colleague_atmosphere_satisfaction), -1, colleague_atmosphere_satisfaction)
+  )
 
