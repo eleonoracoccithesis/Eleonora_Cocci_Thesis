@@ -1,0 +1,95 @@
+
+library(dplyr)
+library(caret)
+library(glmnet)
+
+# Define variable groups
+numerical_vars <- c("age", "birth_year_first_child")
+ordinal_vars <- c("family_satisfaction", "future_children", "social_contacts_satisfaction", "work_satisfaction", "colleague_atmosphere_satisfaction")
+categorical_vars <- c("shared_friends", "partner", "church_member", "sports_club_member", "political_party_member", "primary_occupation")
+
+# Step 1: Preprocessing
+preprocess_RLL <- function(data) {
+  data <- data %>%
+    # Exclude irrelevant variables
+    select(-c(ID, gender)) %>%
+    # Scale numerical variables
+    mutate(across(all_of(numerical_vars), ~ scale(.))) %>%
+    # Optionally scale ordinal variables (if needed)
+    mutate(across(all_of(ordinal_vars), ~ scale(.))) %>%
+    # One-hot encode categorical variables
+    {
+      dummies <- dummyVars(~ ., data = .[, categorical_vars], fullRank = TRUE)
+      encoded_categorical <- as.data.frame(predict(dummies, newdata = .))
+      bind_cols(select(., -all_of(categorical_vars)), encoded_categorical)
+    }
+  return(data)
+}
+
+# Apply preprocessing
+preprocessed_data <- preprocess_RLL(preprocessed_data)
+
+# Step 2: Separate Target Variable
+target_var <- "yes_no_baby"
+predictors <- setdiff(names(preprocessed_data), target_var)
+
+# Step 3: Handle Class Imbalance
+# Compute class weights
+class_weights <- nrow(preprocessed_data) / (2 * table(preprocessed_data[[target_var]]))
+preprocessed_data$class_weights <- ifelse(preprocessed_data[[target_var]] == 1, class_weights[2], class_weights[1])
+
+# Step 4: Split Data
+train_data <- preprocessed_data %>% filter(year >= 2007 & year <= 2016)
+validation_data <- preprocessed_data %>% filter(year >= 2017 & year <= 2018)
+test_data <- preprocessed_data %>% filter(year >= 2019 & year <= 2022)
+
+# Extract features and target for each set
+train_X <- as.matrix(train_data %>% select(all_of(predictors)))
+train_y <- as.numeric(train_data[[target_var]])
+train_weights <- train_data$class_weights
+
+validation_X <- as.matrix(validation_data %>% select(all_of(predictors)))
+validation_y <- as.numeric(validation_data[[target_var]])
+
+test_X <- as.matrix(test_data %>% select(all_of(predictors)))
+test_y <- as.numeric(test_data[[target_var]])
+
+# Step 5: Train the Model
+set.seed(42)
+cv_model <- cv.glmnet(
+  x = train_X,
+  y = train_y,
+  family = "binomial",
+  alpha = 1, # Lasso Regularization
+  nfolds = 5,
+  weights = train_weights # Apply class weights
+)
+
+# Get the best lambda
+best_lambda <- cv_model$lambda.min
+cat("Best Lambda:", best_lambda, "\n")
+
+# Train the final model
+final_model <- glmnet(
+  x = train_X,
+  y = train_y,
+  family = "binomial",
+  alpha = 1,
+  lambda = best_lambda,
+  weights = train_weights
+)
+
+# Step 6: Evaluate on Validation Set
+validation_predictions <- predict(final_model, newx = validation_X, type = "response")
+validation_classes <- ifelse(validation_predictions > 0.5, 1, 0)
+
+# Confusion matrix and metrics
+conf_matrix <- table(Predicted = validation_classes, Actual = validation_y)
+precision <- conf_matrix[2, 2] / sum(conf_matrix[2, ])
+recall <- conf_matrix[2, 2] / sum(conf_matrix[, 2])
+f1_score <- 2 * (precision * recall) / (precision + recall)
+
+cat("Validation Metrics:\n")
+cat("Precision:", round(precision, 4), "\n")
+cat("Recall:", round(recall, 4), "\n")
+cat("F1-Score:", round(f1_score, 4), "\n")
