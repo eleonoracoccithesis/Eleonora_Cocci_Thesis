@@ -1,26 +1,26 @@
 library(dplyr)
 library(caret)
 library(randomForest)
-library(ROSE) # For oversampling
-library(pROC) # For AUC and ROC curve analysis
+library(ROSE)
+library(pROC)
 
 # Define variable groups
-numerical_vars <- c("age", "birth_year_first_child")
+numerical_vars <- c("age")
 ordinal_vars <- c("family_satisfaction", "future_children", "social_contacts_satisfaction", "work_satisfaction", "colleague_atmosphere_satisfaction")
 categorical_vars <- c("shared_friends", "partner", "church_member", "sports_club_member", "political_party_member", "primary_occupation")
 
-# Step 1: Preprocessing with Feature Engineering
+# Step 1: Preprocessing
 preprocess_RF <- function(data) {
   data <- data %>%
     # Exclude irrelevant variables
-    select(-c(ID, gender)) %>%
-    # Feature engineering: Create interaction features
+    select(-c(ID, gender, birth_year_first_child)) %>%
+    # Create interaction features
     mutate(
       job_satisfaction = rowMeans(select(., work_satisfaction, colleague_atmosphere_satisfaction), na.rm = TRUE),
       age_occupation_interaction = age * as.numeric(primary_occupation)
     ) %>%
-    # Keep numerical and ordinal variables as they are
-    mutate(across(all_of(categorical_vars), as.factor)) # Label encode categorical variables
+    # Label encode categorical variables
+    mutate(across(all_of(categorical_vars), as.factor))
   return(data)
 }
 
@@ -29,18 +29,18 @@ preprocessed_data <- preprocess_RF(preprocessed_data)
 
 # Step 2: Separate Target Variable
 target_var <- "yes_no_baby"
-predictors <- setdiff(names(preprocessed_data), c(target_var, "year")) # Exclude 'year' from predictors
+predictors <- setdiff(names(preprocessed_data), c(target_var, "year"))
 
 # Step 3: Split Data
 train_data <- preprocessed_data %>% filter(year >= 2007 & year <= 2016)
 validation_data <- preprocessed_data %>% filter(year >= 2017 & year <= 2018)
 
-# Step 4: Handle Class Imbalance with ROSE (Oversampling)
+# Step 4: Handle Class Imbalance with ROSE
 balanced_train <- ovun.sample(yes_no_baby ~ ., data = train_data, method = "over", N = nrow(train_data) * 2)$data
 
-# Extract features and target for each set
+# Extract features and target
 train_X <- balanced_train %>% select(all_of(predictors))
-train_y <- as.factor(balanced_train[[target_var]]) # Oversampled target variable
+train_y <- as.factor(balanced_train[[target_var]])
 
 validation_X <- validation_data %>% select(all_of(predictors))
 validation_y <- as.factor(validation_data[[target_var]])
@@ -49,13 +49,13 @@ validation_y <- as.factor(validation_data[[target_var]])
 set.seed(42)
 tune_grid <- expand.grid(
   mtry = c(2, 4, 6, 8, 10),
-  ntree = c(500, 1000) # Number of trees
+  ntree = c(500, 1000)
 )
 
 best_model <- NULL
 best_f1 <- -Inf
 
-# Perform cross-validation to find the best hyperparameters
+# Perform cross-validation for tuning
 for (mtry_val in tune_grid$mtry) {
   for (ntree_val in tune_grid$ntree) {
     rf_cv_model <- randomForest(
@@ -63,7 +63,6 @@ for (mtry_val in tune_grid$mtry) {
       y = train_y,
       mtry = mtry_val,
       ntree = ntree_val,
-      classwt = NULL, # Class weighting not applied during tuning
       importance = TRUE
     )
     
@@ -82,14 +81,14 @@ for (mtry_val in tune_grid$mtry) {
   }
 }
 
-# Final model after tuning
+# Final model
 rf_model <- best_model
 
 # Step 6: Evaluate on Validation Set with Threshold Adjustment
 validation_probabilities <- predict(rf_model, newdata = validation_X, type = "prob")[, 2]
 
-# Adjust threshold to improve recall/F1
-threshold <- 0.3 # Lower threshold to increase sensitivity
+# Adjust threshold
+threshold <- 0.3
 validation_classes <- ifelse(validation_probabilities > threshold, 1, 0)
 
 # Confusion matrix and metrics
@@ -98,7 +97,7 @@ precision <- ifelse(sum(conf_matrix[2, ]) > 0, conf_matrix[2, 2] / sum(conf_matr
 recall <- ifelse(sum(conf_matrix[, 2]) > 0, conf_matrix[2, 2] / sum(conf_matrix[, 2]), 0)
 f1_score <- ifelse((precision + recall) > 0, 2 * (precision * recall) / (precision + recall), NaN)
 
-# Print Validation Metrics
+# Print validation metrics
 cat("Validation Metrics (Threshold =", threshold, "):\n")
 cat("Precision:", round(precision, 4), "\n")
 cat("Recall:", round(recall, 4), "\n")
