@@ -1,0 +1,104 @@
+library(dplyr)
+library(caret)
+library(ROSE)
+library(pROC)
+
+# Define variable groups
+numerical_vars <- c("age")
+ordinal_vars <- c("family_satisfaction", "future_children", "social_contacts_satisfaction", "work_satisfaction", "colleague_atmosphere_satisfaction")
+categorical_vars <- c("shared_friends", "partner", "church_member", "sports_club_member", "political_party_member", "primary_occupation")
+
+# Step 1: Preprocessing
+preprocess_KNN <- function(data) {
+  data <- data %>%
+    # Exclude irrelevant variables
+    select(-c(ID, gender, birth_year_first_child)) %>%
+    # Scale numerical and ordinal variables
+    mutate(across(all_of(c(numerical_vars, ordinal_vars)), ~ scale(.))) %>%
+    # One-hot encode categorical variables
+    {
+      dummies <- dummyVars(~ ., data = .[, categorical_vars], fullRank = TRUE)
+      encoded_categorical <- as.data.frame(predict(dummies, newdata = .))
+      bind_cols(select(., -all_of(categorical_vars)), encoded_categorical)
+    }
+  return(data)
+}
+
+# Apply preprocessing
+preprocessed_data <- preprocess_KNN(preprocessed_data)
+
+# Step 2: Separate Target Variable
+target_var <- "yes_no_baby"
+predictors <- setdiff(names(preprocessed_data), c(target_var, "year"))
+
+# Step 3: Split Data
+train_data <- preprocessed_data %>% filter(year >= 2007 & year <= 2016)
+validation_data <- preprocessed_data %>% filter(year >= 2017 & year <= 2018)
+
+# Step 4: Combine ROSE Oversampling and Class Weight Simulation
+balanced_train <- ovun.sample(yes_no_baby ~ ., data = train_data, method = "both", N = nrow(train_data) * 2)$data
+
+# Extract features and target
+train_X <- balanced_train %>% select(all_of(predictors))
+train_y <- as.factor(balanced_train[[target_var]])
+
+validation_X <- validation_data %>% select(all_of(predictors))
+validation_y <- as.factor(validation_data[[target_var]])
+
+# Step 5: Hyperparameter Tuning for KNN with Cross-Validation
+set.seed(42)
+tune_grid <- expand.grid(k = seq(1, 15, by = 2)) # Test odd values of k from 1 to 15
+
+best_k <- NULL
+best_f1 <- -Inf
+
+for (k in tune_grid$k) {
+  knn_cv_model <- train(
+    x = train_X,
+    y = train_y,
+    method = "knn",
+    tuneGrid = data.frame(k = k),
+    trControl = trainControl(method = "cv", number = 5) # 5-fold cross-validation
+  )
+  
+  # Evaluate on validation data
+  validation_predictions <- predict(knn_cv_model, newdata = validation_X)
+  conf_matrix <- table(Predicted = validation_predictions, Actual = validation_y)
+  precision <- ifelse(sum(conf_matrix[2, ]) > 0, conf_matrix[2, 2] / sum(conf_matrix[2, ]), 0)
+  recall <- ifelse(sum(conf_matrix[, 2]) > 0, conf_matrix[2, 2] / sum(conf_matrix[, 2]), 0)
+  f1_score <- ifelse((precision + recall) > 0, 2 * (precision * recall) / (precision + recall), 0)
+  
+  if (f1_score > best_f1) {
+    best_f1 <- f1_score
+    best_k <- k
+  }
+}
+
+# Step 6: Train Final KNN Model with Best k
+cat("Best k:", best_k, "\n")
+final_knn_model <- train(
+  x = train_X,
+  y = train_y,
+  method = "knn",
+  tuneGrid = data.frame(k = best_k),
+  trControl = trainControl(method = "none")
+)
+
+# Step 7: Adjust Threshold and Evaluate on Validation Set
+validation_probabilities <- predict(final_knn_model, newdata = validation_X, type = "prob")[, 2]
+
+# Adjust threshold to improve recall/F1
+threshold <- 0.4 # Experiment with lower thresholds to balance precision and recall
+validation_classes <- ifelse(validation_probabilities > threshold, 1, 0)
+
+# Confusion matrix and metrics
+conf_matrix <- table(Predicted = validation_classes, Actual = validation_y)
+precision <- ifelse(sum(conf_matrix[2, ]) > 0, conf_matrix[2, 2] / sum(conf_matrix[2, ]), 0)
+recall <- ifelse(sum(conf_matrix[, 2]) > 0, conf_matrix[2, 2] / sum(conf_matrix[, 2]), 0)
+f1_score <- ifelse((precision + recall) > 0, 2 * (precision * recall) / (precision + recall), NaN)
+
+# Print Validation Metrics
+cat("Validation Metrics (Threshold =", threshold, "):\n")
+cat("Precision:", round(precision, 4), "\n")
+cat("Recall:", round(recall, 4), "\n")
+cat("F1-Score:", round(f1_score, 4), "\n")
