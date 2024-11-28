@@ -1,10 +1,9 @@
-
 library(dplyr)
 library(caret)
 library(glmnet)
 
-# Define variable groups
-numerical_vars <- c("age", "birth_year_first_child")
+# Define variable groups (excluding birth_year_first_child)
+numerical_vars <- c("age")
 ordinal_vars <- c("family_satisfaction", "future_children", "social_contacts_satisfaction", "work_satisfaction", "colleague_atmosphere_satisfaction")
 categorical_vars <- c("shared_friends", "partner", "church_member", "sports_club_member", "political_party_member", "primary_occupation")
 
@@ -31,7 +30,7 @@ preprocessed_data <- preprocess_RLL(preprocessed_data)
 
 # Step 2: Separate Target Variable
 target_var <- "yes_no_baby"
-predictors <- setdiff(names(preprocessed_data), target_var)
+predictors <- setdiff(names(preprocessed_data), c(target_var, "birth_year_first_child"))
 
 # Step 3: Handle Class Imbalance
 # Compute class weights
@@ -85,9 +84,9 @@ validation_classes <- ifelse(validation_predictions > 0.5, 1, 0)
 
 # Confusion matrix and metrics
 conf_matrix <- table(Predicted = validation_classes, Actual = validation_y)
-precision <- conf_matrix[2, 2] / sum(conf_matrix[2, ])
-recall <- conf_matrix[2, 2] / sum(conf_matrix[, 2])
-f1_score <- 2 * (precision * recall) / (precision + recall)
+precision <- ifelse(sum(conf_matrix[2, ]) > 0, conf_matrix[2, 2] / sum(conf_matrix[2, ]), 0)
+recall <- ifelse(sum(conf_matrix[, 2]) > 0, conf_matrix[2, 2] / sum(conf_matrix[, 2]), 0)
+f1_score <- ifelse((precision + recall) > 0, 2 * (precision * recall) / (precision + recall), NaN)
 
 cat("Validation Metrics:\n")
 cat("Precision:", round(precision, 4), "\n")
