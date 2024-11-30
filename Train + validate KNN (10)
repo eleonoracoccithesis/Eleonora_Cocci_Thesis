@@ -34,6 +34,7 @@ predictors <- setdiff(names(preprocessed_data), c(target_var, "year"))
 # Step 3: Split Data
 train_data <- preprocessed_data %>% filter(year >= 2007 & year <= 2016)
 validation_data <- preprocessed_data %>% filter(year >= 2017 & year <= 2018)
+test_data <- preprocessed_data %>% filter(year >= 2019 & year <= 2022)
 
 # Step 4: Combine ROSE Oversampling and Class Weight Simulation
 balanced_train <- ovun.sample(yes_no_baby ~ ., data = train_data, method = "both", N = nrow(train_data) * 2)$data
