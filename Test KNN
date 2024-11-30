@@ -1,0 +1,25 @@
+# Step 8: Preprocess the Test Data
+test_X <- test_data %>% select(all_of(predictors))
+test_y <- as.factor(test_data[[target_var]])
+
+# Step 9: Predict Probabilities on the Test Set
+test_probabilities <- predict(final_knn_model, newdata = test_X, type = "prob")[, 2]
+
+# Step 10: Adjust Threshold for Test Predictions
+test_classes <- ifelse(test_probabilities > threshold, 1, 0) # Use the same threshold as for validation
+
+# Step 11: Confusion Matrix and Metrics for the Test Set
+conf_matrix <- table(Predicted = test_classes, Actual = test_y)
+
+# Calculate Test Metrics
+precision <- ifelse(sum(conf_matrix[2, ]) > 0, conf_matrix[2, 2] / sum(conf_matrix[2, ]), 0)
+recall <- ifelse(sum(conf_matrix[, 2]) > 0, conf_matrix[2, 2] / sum(conf_matrix[, 2]), 0)
+f1_score <- ifelse((precision + recall) > 0, 2 * (precision * recall) / (precision + recall), NaN)
+mse <- mean((test_probabilities - as.numeric(as.character(test_y)))^2)
+
+# Step 12: Print Test Metrics
+cat("Test Metrics (Threshold =", threshold, "):\n")
+cat("Precision:", round(precision, 4), "\n")
+cat("Recall:", round(recall, 4), "\n")
+cat("F1-Score:", round(f1_score, 4), "\n")
+cat("MSE:", round(mse, 4), "\n")
