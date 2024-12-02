@@ -75,3 +75,51 @@ head(aggregated_data)
 write.csv(aggregated_data, "final_aggregated_relationships.csv", row.names = FALSE)
 cat("Final aggregated dataset saved as 'final_aggregated_relationships.csv'\n")
 
+
+
+
+
+
+
+
+library(dplyr)
+library(caret)
+library(ROSE)
+library(pROC)
+
+# Define variable groups
+numerical_vars <- c("age")
+ordinal_vars <- c("family_satisfaction", "future_children", "social_contacts_satisfaction", "work_satisfaction", "colleague_atmosphere_satisfaction")
+categorical_vars <- c("shared_friends", "partner", "church_member", "sports_club_member", "political_party_member", "primary_occupation")
+
+# Step 1: Preprocessing
+preprocess_KNN <- function(data) {
+  data <- data %>%
+    # Exclude irrelevant variables (but keep ID for later use)
+    select(-c(gender, birth_year_first_child)) %>%
+    # Scale numerical and ordinal variables
+    mutate(across(all_of(c(numerical_vars, ordinal_vars)), ~ scale(.))) %>%
+    # One-hot encode categorical variables
+    {
+      dummies <- dummyVars(~ ., data = .[, categorical_vars], fullRank = TRUE)
+      encoded_categorical <- as.data.frame(predict(dummies, newdata = .))
+      bind_cols(select(., -all_of(categorical_vars)), encoded_categorical)
+    }
+  return(data)
+}
+
+# Apply preprocessing (keep ID column for validation_data)
+preprocessed_data <- preprocess_KNN(preprocessed_data)
+
+# Step 2: Separate Target Variable
+target_var <- "yes_no_baby"
+predictors <- setdiff(names(preprocessed_data), c(target_var, "year", "ID"))
+
+# Step 3: Split Data (Retain ID for validation_data)
+train_data <- preprocessed_data %>% filter(year >= 2007 & year <= 2016)
+validation_data <- preprocessed_data %>% filter(year >= 2017 & year <= 2018) %>% select(ID, everything())
+test_data <- preprocessed_data %>% filter(year >= 2019 & year <= 2022)
+
+# View the updated validation_data to confirm ID retention
+head(validation_data)
+
