@@ -156,3 +156,104 @@ test_merged <- merge(test_data, aggregated_data, by = "ID", all.x = TRUE)
 head(test_merged)
 
 
+
+
+
+library(dplyr)
+
+# Function to calculate weighted KNN
+weighted_knn <- function(X_train, y_train, X_test, k, class_weights) {
+  # Initialize predictions
+  predictions <- vector("character", nrow(X_test))
+  
+  # Loop through each test instance
+  for (i in seq_len(nrow(X_test))) {
+    # Calculate distances between test instance and all training instances
+    distances <- sqrt(rowSums((t(t(X_train) - X_test[i, ]))^2))
+    
+    # Get the indices of the k-nearest neighbors
+    nearest_indices <- order(distances)[1:k]
+    
+    # Extract classes of the nearest neighbors
+    neighbor_classes <- y_train[nearest_indices]
+    
+    # Apply class weights
+    neighbor_weights <- class_weights[as.character(neighbor_classes)]
+    
+    # Aggregate weighted votes
+    weighted_votes <- aggregate(neighbor_weights, by = list(Class = neighbor_classes), FUN = sum)
+    colnames(weighted_votes) <- c("Class", "WeightedVotes")
+    
+    # Predict the class with the highest weighted vote
+    predictions[i] <- weighted_votes$Class[which.max(weighted_votes$WeightedVotes)]
+  }
+  
+  return(factor(predictions, levels = levels(y_train)))
+}
+
+# Define predictors and target
+predictors <- setdiff(names(validation_merged), c("ID", "year", "yes_no_baby"))  # Exclude non-predictive columns
+target <- "yes_no_baby"
+
+# Separate features (X) and target (y)
+X_validation <- validation_merged[, predictors]
+y_validation <- validation_merged[, target]
+
+X_test <- test_merged[, predictors]
+y_test <- test_merged[, target]
+
+# Handle missing values with imputation
+preprocess <- preProcess(X_validation, method = c("medianImpute"))
+X_validation <- predict(preprocess, newdata = X_validation)
+X_test <- predict(preprocess, newdata = X_test)
+
+# Calculate class weights
+class_distribution <- table(y_validation)
+class_weights <- max(class_distribution) / class_distribution
+names(class_weights) <- levels(y_validation)
+
+cat("Class Weights:\n")
+print(class_weights)
+
+# Apply custom weighted KNN
+k <- 5  # Choose number of neighbors
+knn_predictions <- weighted_knn(X_train = X_validation, y_train = y_validation, X_test = X_test, k = k, class_weights = class_weights)
+
+# Confusion Matrix
+confusion_matrix <- table(Predicted = knn_predictions, Actual = y_test)
+cat("Confusion Matrix:\n")
+print(confusion_matrix)
+
+# Calculate Metrics
+true_positives <- if ("Yes" %in% rownames(confusion_matrix) & "Yes" %in% colnames(confusion_matrix)) 
+  confusion_matrix["Yes", "Yes"] else 0
+true_negatives <- if ("No" %in% rownames(confusion_matrix) & "No" %in% colnames(confusion_matrix)) 
+  confusion_matrix["No", "No"] else 0
+false_positives <- if ("Yes" %in% rownames(confusion_matrix) & "No" %in% colnames(confusion_matrix)) 
+  confusion_matrix["Yes", "No"] else 0
+false_negatives <- if ("No" %in% rownames(confusion_matrix) & "Yes" %in% colnames(confusion_matrix)) 
+  confusion_matrix["No", "Yes"] else 0
+
+# Precision
+precision <- if ((true_positives + false_positives) > 0) 
+  true_positives / (true_positives + false_positives) else NA
+
+# Recall
+recall <- if ((true_positives + false_negatives) > 0) 
+  true_positives / (true_positives + false_negatives) else NA
+
+# F1-Score
+f1_score <- if (!is.na(precision) & !is.na(recall) & (precision + recall) > 0) 
+  2 * (precision * recall) / (precision + recall) else NA
+
+# MSE
+knn_predictions_binary <- ifelse(knn_predictions == "Yes", 1, 0)
+y_test_binary <- ifelse(y_test == "Yes", 1, 0)
+mse <- mean((knn_predictions_binary - y_test_binary)^2, na.rm = TRUE)
+
+# Print Metrics
+cat("Precision: ", precision, "\n")
+cat("Recall: ", recall, "\n")
+cat("F1-Score: ", f1_score, "\n")
+cat("Mean Squared Error (MSE): ", mse, "\n")
+
