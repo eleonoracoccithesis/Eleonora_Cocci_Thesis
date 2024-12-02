@@ -141,7 +141,17 @@ validation_merged <- merge(validation_data, aggregated_data, by = "ID", all.x = 
 # View the merged data
 head(validation_merged)
 
-# Save the merged dataset to a file
-write.csv(validation_merged, "validation_merged_with_aggregated.csv", row.names = FALSE)
-cat("Merged validation dataset saved as 'validation_merged_with_aggregated.csv'\n")
+
+
+
+# Ensure ID columns are consistent
+test_data$ID <- as.character(test_data$ID)
+aggregated_data$ID <- as.character(aggregated_data$ID)
+
+# Merge test_data with aggregated_data
+test_merged <- merge(test_data, aggregated_data, by = "ID", all.x = TRUE)
+
+# View the merged test_data
+head(test_merged)
+
 
