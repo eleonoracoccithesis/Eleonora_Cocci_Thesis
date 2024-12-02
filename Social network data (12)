@@ -123,3 +123,25 @@ test_data <- preprocessed_data %>% filter(year >= 2019 & year <= 2022)
 # View the updated validation_data to confirm ID retention
 head(validation_data)
 
+
+
+
+
+
+
+
+
+# Ensure ID columns are consistent in both datasets
+validation_data$ID <- as.character(validation_data$ID)
+aggregated_data$ID <- as.character(aggregated_data$ID)
+
+# Merge the datasets by ID
+validation_merged <- merge(validation_data, aggregated_data, by = "ID", all.x = TRUE)
+
+# View the merged data
+head(validation_merged)
+
+# Save the merged dataset to a file
+write.csv(validation_merged, "validation_merged_with_aggregated.csv", row.names = FALSE)
+cat("Merged validation dataset saved as 'validation_merged_with_aggregated.csv'\n")
+
