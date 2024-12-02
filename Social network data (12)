@@ -1,1 +1,77 @@
+# Load necessary libraries
+library(dplyr)
+library(haven)  # For handling labelled data
+
+# Assuming 'social_networks_2018' is the dataset already loaded in your R environment
+data <- social_networks_2018
+
+# Define the variable ranges
+relationship_vars <- paste0("wj18a", 139:163)    # Relationships
+closeness_vars <- paste0("wj18a", 165:189)       # Closeness
+face_to_face_vars <- paste0("wj18a", 217:241)    # Face-to-face contact
+children_vars <- paste0("wj18a", 295:319)        # Has children/expecting
+happiness_vars <- paste0("wj18a", 372:396)       # Happiness change
+babysitter_vars <- paste0("wj18a", 450:474)      # Babysitter help
+discuss_children_vars <- paste0("wj18a", 476:500) # Discuss children
+mutual_contact_vars <- paste0("wj18a", 502:526)  # Mutual contact
+
+# Convert all relevant columns to numeric, coercing invalid values to NA
+convert_to_numeric <- function(x) {
+  as.numeric(as.character(x))  # Convert haven_labelled or character to numeric
+}
+
+data[relationship_vars] <- lapply(data[relationship_vars], convert_to_numeric)
+data[closeness_vars] <- lapply(data[closeness_vars], convert_to_numeric)
+data[face_to_face_vars] <- lapply(data[face_to_face_vars], convert_to_numeric)
+data[children_vars] <- lapply(data[children_vars], convert_to_numeric)
+data[happiness_vars] <- lapply(data[happiness_vars], convert_to_numeric)
+data[babysitter_vars] <- lapply(data[babysitter_vars], convert_to_numeric)
+data[discuss_children_vars] <- lapply(data[discuss_children_vars], convert_to_numeric)
+data[mutual_contact_vars] <- lapply(data[mutual_contact_vars], convert_to_numeric)
+
+# Summarize all variables
+aggregated_data <- data %>%
+  rowwise() %>%
+  summarise(
+    ID = nomem_encr,  # Keep ID
+    
+    # Relationship counts
+    Partner_Count = sum(c_across(all_of(relationship_vars)) == 1, na.rm = TRUE),
+    Parent_Count = sum(c_across(all_of(relationship_vars)) == 2, na.rm = TRUE),
+    Sibling_Count = sum(c_across(all_of(relationship_vars)) == 3, na.rm = TRUE),
+    Work_Count = sum(c_across(all_of(relationship_vars)) == 10, na.rm = TRUE),
+    Social_Activity_Count = sum(c_across(all_of(relationship_vars)) == 11, na.rm = TRUE),
+
+    # Average bond closeness for each relationship type
+    Partner_Closeness = mean(c_across(all_of(closeness_vars))[c_across(all_of(relationship_vars)) == 1], na.rm = TRUE),
+    Parent_Closeness = mean(c_across(all_of(closeness_vars))[c_across(all_of(relationship_vars)) == 2], na.rm = TRUE),
+    Sibling_Closeness = mean(c_across(all_of(closeness_vars))[c_across(all_of(relationship_vars)) == 3], na.rm = TRUE),
+    Work_Closeness = mean(c_across(all_of(closeness_vars))[c_across(all_of(relationship_vars)) == 10], na.rm = TRUE),
+    Social_Activity_Closeness = mean(c_across(all_of(closeness_vars))[c_across(all_of(relationship_vars)) == 11], na.rm = TRUE),
+
+    # Face-to-face contact frequency
+    Face_to_Face_Contact_Avg = mean(c_across(all_of(face_to_face_vars)), na.rm = TRUE),
+
+    # Has children/expecting
+    Has_Children_Count = sum(c_across(all_of(children_vars)) == 1, na.rm = TRUE),
+
+    # Happiness change after childbirth
+    Happiness_Change_Avg = mean(c_across(all_of(happiness_vars)), na.rm = TRUE),
+
+    # Babysitter help count
+    Babysitter_Help_Count = sum(c_across(all_of(babysitter_vars)) == 1, na.rm = TRUE),
+
+    # Discuss children count
+    Discuss_Children_Count = sum(c_across(all_of(discuss_children_vars)) == 1, na.rm = TRUE),
+
+    # Mutual contact count
+    Mutual_Contact_Count = sum(c_across(all_of(mutual_contact_vars)) == 1, na.rm = TRUE)
+  )
+
+# View the aggregated data
+head(aggregated_data)
+
+# Save the aggregated data back to a file
+write.csv(aggregated_data, "final_aggregated_relationships.csv", row.names = FALSE)
+cat("Final aggregated dataset saved as 'final_aggregated_relationships.csv'\n")
 
