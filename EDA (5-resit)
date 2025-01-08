@@ -1,0 +1,17 @@
+# Create the density plot with `yes_no_baby`
+ggplot(combined_data, aes(x = age, fill = as.factor(yes_no_baby))) +
+  geom_density(alpha = 0.7) +
+  labs(
+    x = "Age",
+    y = "Density",
+    fill = "Yes or No Baby",
+    
+  ) +
+  scale_fill_brewer(palette = "Set2", labels = c("No", "Yes")) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 10, face = "bold"),
+    axis.text.y = element_text(size = 10, face = "bold"),
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
+    plot.caption = element_text(size = 12, face = "italic") # Adjust caption size and style
+  )
