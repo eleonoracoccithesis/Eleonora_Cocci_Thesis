@@ -1,3 +1,28 @@
+dimension of dataset:
+> dim(combined_data)
+[1] 6563   17
+
+
+summary statistics for categorical variables:
+# Define the categorical columns of interest
+categorical_cols <- c("yes_no_baby", "partner", "primary_occupation")
+
+# Calculate frequency for each column
+frequency <- lapply(combined_data[categorical_cols], table, useNA = "ifany")
+
+# Calculate proportion for each column
+proportion <- lapply(combined_data[categorical_cols], function(x) prop.table(table(x, useNA = "ifany")) * 100)
+
+> # Display the results
+> frequency
+$yes_no_baby
+
+   0    1 
+6092  471 
+
+
+
+
 # Create the density plot with `yes_no_baby`
 ggplot(combined_data, aes(x = age, fill = as.factor(yes_no_baby))) +
   geom_density(alpha = 0.7) +
