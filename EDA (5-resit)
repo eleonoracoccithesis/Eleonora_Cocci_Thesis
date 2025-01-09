@@ -46,3 +46,41 @@ ggplot(combined_data, aes(x = age, fill = as.factor(yes_no_baby))) +
     axis.text.y = element_text(size = 10, face = "bold"),
     plot.title = element_text(size = 14, face = "bold", hjust = 0.5)
   )
+
+
+summary statistics for ordinal variables:
+> # Define the ordinal columns of interest
+> ordinal_cols <- c("work_satisfaction", "colleague_atmosphere_satisfaction")
+> 
+> # Calculate frequency for each column
+> frequency <- lapply(combined_data[ordinal_cols], table, useNA = "ifany")
+> 
+> # Calculate proportion for each column
+> proportion <- lapply(combined_data[ordinal_cols], function(x) prop.table(table(x, useNA = "ifany")) * 100)
+> 
+> # Display the results
+> frequency
+$work_satisfaction
+
+   0    1    2    3    4    5    6    7    8    9   10 <NA> 
+  17   17   34   65   88  216  445 1207 1514  501  203 2256 
+
+$colleague_atmosphere_satisfaction
+
+   0    1    2    3    4    5    6    7    8    9   10 <NA> 
+  13   10   24   58   58  170  367  950 1329  730  300 2554 
+
+> proportion
+$work_satisfaction
+x
+         0          1          2          3          4          5          6 
+ 0.2590279  0.2590279  0.5180558  0.9904007  1.3408502  3.2911778  6.7804358 
+         7          8          9         10       <NA> 
+18.3909797 23.0687186  7.6337041  3.0930977 34.3745238 
+
+$colleague_atmosphere_satisfaction
+x
+         0          1          2          3          4          5          6 
+ 0.1980801  0.1523693  0.3656864  0.8837422  0.8837422  2.5902788  5.5919549 
+         7          8          9         10       <NA> 
+14.4750876 20.2498857 11.1229621  4.5710803 38.9151303
