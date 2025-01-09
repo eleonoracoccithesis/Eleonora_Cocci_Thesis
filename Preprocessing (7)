@@ -144,6 +144,11 @@ preprocessed_data <- preprocessed_data %>%
   )
 
 
+# Calculate the percentage of missing values for primary_occupation
+missing_percentage <- sum(is.na(combined_data$primary_occupation)) / nrow(combined_data) * 100
+
+# Print the result
+cat("Percentage of missing values for primary_occupation:", round(missing_percentage, 2), "%\n")
 
 
 check NAs
@@ -171,4 +176,6 @@ missing_summary <- preprocessed_data %>%
 
 # Print the missing summary
 print(missing_summary)
+
+
 
